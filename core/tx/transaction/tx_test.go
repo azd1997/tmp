@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/azd1997/Ecare/ecoin/account"
+	"github.com/azd1997/ecoin/account"
 )
 
 func accountAndUserIDForTest() (*account.Account, account.UserId) {
@@ -40,8 +40,8 @@ func TestNewTxGeneral(t *testing.T) {
 
 	// 生成交易
 	tx, err := NewTXWithArgsCheck(TX_GENERAL, args, func(args Args) error {
-		return nil	
-	}) 
+		return nil
+	})
 	// new过程已测试Hash/Sign方法
 	if err != nil {
 		t.Error(err)
@@ -77,8 +77,8 @@ func TestNewTxArbitrate(t *testing.T) {
 	// 生成交易
 	tx, err := NewTXWithArgsCheck(TX_ARBITRATE, args, func(args Args) error {
 		return nil
-	}) 
-	
+	})
+
 	// new过程已测试Hash方法
 	if err != nil {
 		t.Error(err)

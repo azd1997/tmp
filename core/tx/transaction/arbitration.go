@@ -10,13 +10,15 @@ func (a Arbitration) IsValid() (err error) {
 		BothFaultLevel1, BothFaultLevel2, BothFaultLevel3,
 	}
 	for _, a1 := range as {
-		if a1 == a {return nil}
+		if a1 == a {
+			return nil
+		}
 	}
 	return ErrUnknownArbitrationCode
 }
 
 const (
-	Fault Arbitration = iota		// 用于没匹配到既有问题的情况下作出仲裁惩处
+	Fault Arbitration = iota // 用于没匹配到既有问题的情况下作出仲裁惩处
 
 	BuyerFaultLevel1 = 20
 	BuyerFaultLevel2 = 21

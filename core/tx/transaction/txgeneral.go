@@ -8,21 +8,21 @@ import (
 
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	"github.com/azd1997/ego/utils"
 )
 
 // TxGeneral 通用交易， 一方转给另一方，无需确认
 type TxGeneral struct {
-//	TxBase
+	//	TxBase
 	Id          ecrypto.Hash      `json:"id"`
-	Time        common.TimeStamp `json:"time"`
-	From        account.UserId   `json:"from"`
-	To          account.UserId   `json:"to"`
-	Amount      common.Coin      `json:"amount"`
+	Time        common.TimeStamp  `json:"time"`
+	From        account.UserId    `json:"from"`
+	To          account.UserId    `json:"to"`
+	Amount      common.Coin       `json:"amount"`
 	Sig         ecrypto.Signature `json:"sig"`
-	Description string           `json:"description"`
+	Description string            `json:"description"`
 }
 
 // newTxGeneral 新建普通转账交易。
@@ -127,7 +127,6 @@ func (tx *TxGeneral) IsValid(txFunc ValidateTxFunc) (err error) {
 	if string(txHash) != string(tx.Id) {
 		return utils.WrapError("TxGeneral_IsValid", ErrWrongTxId)
 	}
-
 
 	// 其他的检查交给传入的检查方法去做
 	if err = txFunc(tx); err != nil {

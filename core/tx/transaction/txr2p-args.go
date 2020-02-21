@@ -1,10 +1,10 @@
 package transaction
 
 import (
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/storage"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	storage "github.com/azd1997/ecoin/store"
+	"github.com/azd1997/ego/utils"
 )
 
 // R2PArgs 新建交易函数newTxR2P()的传参

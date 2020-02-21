@@ -8,14 +8,14 @@ import (
 
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	"github.com/azd1997/ego/utils"
 )
 
 // 仲裁交易，针对商业性质交易如TxR2P的“三次僵持”提出的交易体
 type TxArbitrate struct {
-	Id   ecrypto.Hash      `json:"id"`
+	Id   ecrypto.Hash     `json:"id"`
 	Time common.TimeStamp `json:"time"`
 	// TargetTx 仲裁目标
 	TargetTX CommercialTX `json:"targetTX"`
@@ -37,7 +37,7 @@ type TxArbitrate struct {
 	Description string `json:"description"`
 
 	// Arbitrator 仲裁者
-	Arbitrator account.UserId   `json:"arbitrator"`
+	Arbitrator account.UserId    `json:"arbitrator"`
 	Sig        ecrypto.Signature `json:"sig"`
 }
 
@@ -148,7 +148,6 @@ func (tx *TxArbitrate) IsValid(txFunc ValidateTxFunc) (err error) {
 	if string(txHash) != string(tx.Id) {
 		return utils.WrapError("TxArbitrate_IsValid", ErrWrongTxId)
 	}
-
 
 	// 其他的检查交给传入的检查方法去做
 	if err = txFunc(tx); err != nil {

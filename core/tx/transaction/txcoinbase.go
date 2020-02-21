@@ -8,16 +8,16 @@ import (
 
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	"github.com/azd1997/ego/utils"
 )
 
 // TxCoinbase 出块奖励交易，只允许A类账户接收，A类账户目前包括医院H和第三方研究机构R
 // 由于coinbase交易没有转账者，且必须由出块者构建，所以不设置签名项划定归属。
 type TxCoinbase struct {
-//	TxBase
-	Id          ecrypto.Hash      `json:"id"`
+	//	TxBase
+	Id          ecrypto.Hash     `json:"id"`
 	Time        common.TimeStamp `json:"time"`
 	To          account.UserId   `json:"to"`
 	Amount      common.Coin      `json:"amount"`
@@ -112,7 +112,6 @@ func (tx *TxCoinbase) IsValid(txFunc ValidateTxFunc) (err error) {
 	// TODO： Coinbase还有一个检查点：其由出块节点构造，但在验证过程中必须检查是不是填了出块节点账户。因此在出块节点检查区块时需要有一个区块的检查方法
 	// 而这个方法检查所有交易有效性，并对coinbase（在打包交易时始终放在交易列表第一位）再增加这一个处理。
 	// 如果要在这里做这个检查，就必须穿入一个*Block作参数。但是其他类型交易不需要这个参数，会破坏整体接口的实现。
-
 
 	// 其他的检查交给传入的检查方法去做
 	if err = txFunc(tx); err != nil {

@@ -1,14 +1,14 @@
 package transaction
 
 import (
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ego/utils"
 )
 
 // D2PArgs 新建交易函数newTxD2P()的传参
 type D2PArgs struct {
-	FromAccount        account.Account
-	From      account.UserId
+	FromAccount account.Account
+	From        account.UserId
 	P2D         *TxP2D
 	Response    []byte
 	Description string

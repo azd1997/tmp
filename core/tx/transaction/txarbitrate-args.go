@@ -1,8 +1,8 @@
 package transaction
 
 import (
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ego/utils"
 )
 
 // ArbitrateArgs 新建交易函数newTxArbitrate()的传参
@@ -32,7 +32,6 @@ func (args *ArbitrateArgs) Check(argsFunc CheckArgsFunc) (err error) {
 	}
 
 	// 仲裁结果码不检查了，在交易检查端检查
-
 
 	// 根据传入的函数检查
 	if err = argsFunc(args); err != nil {

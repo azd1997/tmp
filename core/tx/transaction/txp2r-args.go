@@ -1,8 +1,8 @@
 package transaction
 
 import (
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ego/utils"
 )
 
 // TxP2RArgs 新建交易函数newTxP2R()的传参

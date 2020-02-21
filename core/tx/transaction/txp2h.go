@@ -8,15 +8,15 @@ import (
 
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/storage"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	storage "github.com/azd1997/ecoin/store"
+	"github.com/azd1997/ego/utils"
 )
 
 // TxP2H 病人向医院发起的心电数据诊断，分人工和机器自动分析两种。阶段一
 type TxP2H struct {
-	Id             ecrypto.Hash        `json:"id"`
+	Id             ecrypto.Hash       `json:"id"`
 	Time           common.TimeStamp   `json:"time"`
 	From           account.UserId     `json:"from"`
 	To             account.UserId     `json:"to"`
@@ -24,7 +24,7 @@ type TxP2H struct {
 	PurchaseTarget storage.TargetData `json:"purchaseTarget"`
 	PurchaseType   uint8              `json:"purchaseType"` // Auto/Doctor 0/1
 	Description    string             `json:"description"`
-	Sig            ecrypto.Signature   `json:"sig"`
+	Sig            ecrypto.Signature  `json:"sig"`
 }
 
 // newTxP2H 新建P2H转账交易。
@@ -59,7 +59,6 @@ func newTxP2H(args *P2HArgs) (tx *TxP2H, err error) {
 }
 
 /*******************************************************实现接口*********************************************************/
-
 
 // TypeNo 获取交易类型编号
 func (tx *TxP2H) TypeNo() uint {

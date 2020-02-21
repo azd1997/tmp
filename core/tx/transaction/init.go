@@ -1,6 +1,6 @@
 package transaction
 
-import "github.com/azd1997/Ecare/ecoin/utils"
+import "github.com/azd1997/ego/utils"
 
 func init() {
 	utils.GobRegister(&TxCoinbase{}, &TxGeneral{}, &TxR2P{}, &TxP2R{},

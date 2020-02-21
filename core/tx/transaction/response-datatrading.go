@@ -1,12 +1,12 @@
 package transaction
 
 import (
-	"github.com/azd1997/Ecare/ecoin/storage"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/store"
+	"github.com/azd1997/ego/utils"
 )
 
 type RespTrade struct {
-	Source    TX				// 这里的TX只能是R2P或者P2R
+	Source    TX // 这里的TX只能是R2P或者P2R
 	Target    storage.TargetData
 	ReplyInfo []byte
 }

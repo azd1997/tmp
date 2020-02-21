@@ -4,28 +4,27 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
+
 	"time"
 
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/storage"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	storage "github.com/azd1997/ecoin/store"
+	"github.com/azd1997/ego/utils"
 )
-
 
 // TxP2D 病人向下班医生发起的心电诊断交易，阶段一		TODO: 暂时只支持找指定医生诊断；后边考虑广播交易等待医生解决
 type TxP2D struct {
-
-	Id             ecrypto.Hash        `json:"id"`
+	Id             ecrypto.Hash       `json:"id"`
 	Time           common.TimeStamp   `json:"time"`
 	From           account.UserId     `json:"from"`
 	To             account.UserId     `json:"to"`
 	Amount         common.Coin        `json:"amount"`
 	PurchaseTarget storage.TargetData `json:"purchaseTarget"`
 	Description    string             `json:"description"`
-	Sig            ecrypto.Signature   `json:"sig"`
+	Sig            ecrypto.Signature  `json:"sig"`
 }
 
 // newTxP2D 新建P2D转账交易。
@@ -59,7 +58,6 @@ func newTxP2D(args *P2DArgs) (tx *TxP2D, err error) {
 }
 
 /*******************************************************实现接口*********************************************************/
-
 
 // TypeNo 获取交易类型编号
 func (tx *TxP2D) TypeNo() uint {
@@ -132,7 +130,6 @@ func (tx *TxP2D) IsValid(txFunc ValidateTxFunc) (err error) {
 	if string(txHash) != string(tx.Id) {
 		return utils.WrapError("TxP2D_IsValid", ErrWrongTxId)
 	}
-
 
 	// 其他的检查交给传入的检查方法去做
 	if err = txFunc(tx); err != nil {

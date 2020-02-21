@@ -8,19 +8,19 @@ import (
 
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	"github.com/azd1997/ego/utils"
 )
 
 // TxD2P 病人向下班医生发起的心电诊断交易，阶段二
 type TxD2P struct {
 	Id          ecrypto.Hash      `json:"id"`
-	Time        common.TimeStamp `json:"time"`
-	From        account.UserId   `json:"from"`
-	P2D         *TxP2D           `json:"p2dBytes"`
-	Response    []byte           `json:"response"` // 比如说请求数据的密码
-	Description string           `json:"description"`
+	Time        common.TimeStamp  `json:"time"`
+	From        account.UserId    `json:"from"`
+	P2D         *TxP2D            `json:"p2dBytes"`
+	Response    []byte            `json:"response"` // 比如说请求数据的密码
+	Description string            `json:"description"`
 	Sig         ecrypto.Signature `json:"sig"`
 }
 
@@ -129,7 +129,6 @@ func (tx *TxD2P) IsValid(txFunc ValidateTxFunc) (err error) {
 	if string(txHash) != string(tx.Id) {
 		return utils.WrapError("TxD2P_IsValid", ErrWrongTxId)
 	}
-
 
 	// 其他的检查交给传入的检查方法去做
 	if err = txFunc(tx); err != nil {

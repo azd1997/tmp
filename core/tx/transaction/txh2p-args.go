@@ -1,8 +1,8 @@
 package transaction
 
 import (
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ego/utils"
 )
 
 // H2PArgs 新建交易函数newTxH2P()的传参

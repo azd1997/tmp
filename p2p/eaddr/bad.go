@@ -1,6 +1,6 @@
 package eaddr
 
-import "github.com/azd1997/Ecare/ecoin/common"
+import "github.com/azd1997/ecoin/common"
 
 // 作恶行为相关
 

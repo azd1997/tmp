@@ -3,8 +3,8 @@ package transaction
 import (
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/storage"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/store"
+	"github.com/azd1997/ego/utils"
 )
 
 // 由于想要实现的是，调用方不知道每一种交易内部实现，因此，调用方只需要使用接口类型和接口方法
@@ -350,8 +350,6 @@ type Response interface {
 // 这里不选择接口解耦方式，而是将所有需要到全局结构体进行查询的校验内容工作交给上方去做
 // 就像account包一样，所有包只做自己能做的事，把需要协作的工作交给上一层处理
 
-
 type ValidateTxFunc func(tx TX) error
 
 type CheckArgsFunc func(args Args) error
-

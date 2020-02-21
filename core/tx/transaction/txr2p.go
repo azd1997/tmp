@@ -8,18 +8,18 @@ import (
 
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/storage"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	storage "github.com/azd1997/ecoin/store"
+	"github.com/azd1997/ego/utils"
 )
 
 // TxR2P 第三方研究机构向病人发起的数据交易的阶段一交易
 type TxR2P struct {
 	Id   ecrypto.Hash      `json:"id"`
-	Time common.TimeStamp `json:"time"`
-	From account.UserId   `json:"from"`
-	To   account.UserId   `json:"to"` // 为了避免复杂，后续只能是原来的To否则无效
+	Time common.TimeStamp  `json:"time"`
+	From account.UserId    `json:"from"`
+	To   account.UserId    `json:"to"` // 为了避免复杂，后续只能是原来的To否则无效
 	Sig  ecrypto.Signature `json:"sig"`
 
 	PurchaseTarget storage.TargetData `json:"purchaseTarget"` // 非第一次发时一般置空（表示目标不变），否则也可以进行更新
@@ -159,7 +159,6 @@ func (tx *TxR2P) IsValid(txFunc ValidateTxFunc) (err error) {
 	if string(txHash) != string(tx.Id) {
 		return utils.WrapError("TxR2P_IsValid", ErrWrongTxId)
 	}
-
 
 	// 其他的检查交给传入的检查方法去做
 	if err = txFunc(tx); err != nil {

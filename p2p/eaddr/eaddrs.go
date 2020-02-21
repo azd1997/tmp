@@ -1,8 +1,8 @@
 package eaddr
 
 import (
-	"github.com/azd1997/Ecare/ecoin/erro"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/erro"
+	"github.com/azd1997/ego/utils"
 	"github.com/azd1997/ego/edatabase"
 	"sort"
 	"sync"
