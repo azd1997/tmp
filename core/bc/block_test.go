@@ -6,8 +6,8 @@ import (
 
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/transaction"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/core/tx/transaction"
 )
 
 func TestBlock(t *testing.T) {

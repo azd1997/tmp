@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"github.com/azd1997/Ecare/ecoin/common"
+	"github.com/azd1997/ecoin/common"
 )
 
 // TargetData 目标数据，在这里表示所要查找的心电数据记录

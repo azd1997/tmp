@@ -1,9 +1,9 @@
 package utils
 
 import (
-	"fmt"
-	"os"
 	"log"
+	"os"
+	"path/filepath"
 	"runtime"
 )
 
@@ -18,7 +18,9 @@ func LogErr(err error) {
 		if !ok {
 			return
 		}
+		filename = filepath.Base(filename)
 		callFunc := runtime.FuncForPC(pc).Name()
+		callFunc = filepath.Base(callFunc)
 		log.Printf(" [ERROR] (%s:%s:%d) %s\n", filename, callFunc, lineno, err)
 	}
 }

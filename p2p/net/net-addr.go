@@ -3,10 +3,12 @@ package net
 import (
 	"bytes"
 	"encoding/gob"
-	"github.com/azd1997/Ecare/ecoin/eaddr"
-	"github.com/azd1997/Ecare/ecoin/utils"
-	"github.com/azd1997/Ecare/ecoinlib/log"
+
+	log "github.com/azd1997/ego/elog"
 	"github.com/azd1997/ego/enet/etcp"
+	"github.com/azd1997/ego/utils"
+
+	"github.com/azd1997/ecoin/p2p/eaddr"
 )
 
 // SendAddrs 向对方发送自己存有的L1集合。通常为A类节点调用

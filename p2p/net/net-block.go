@@ -3,7 +3,8 @@ package net
 import (
 	"bytes"
 	"encoding/gob"
-	"github.com/azd1997/Ecare/ecoinlib/log"
+
+	log "github.com/azd1997/ego/elog"
 )
 
 // SendBlock 发送区块

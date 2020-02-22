@@ -5,8 +5,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
 )
 
 func TestEcoinAccounts(t *testing.T) {

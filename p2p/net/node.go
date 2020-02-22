@@ -3,15 +3,17 @@ package net
 import (
 	"bytes"
 	"encoding/gob"
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/blockchain/singlechain"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/eaddr"
-	eaccount "github.com/azd1997/Ecare/ecoin/ecoinaccount"
-	"github.com/azd1997/Ecare/ecoin/log"
-	"github.com/azd1997/Ecare/ecoin/utils"
 	"io/ioutil"
 	"net"
+
+	log "github.com/azd1997/ego/elog"
+	"github.com/azd1997/ego/utils"
+
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/core/bc"
+	"github.com/azd1997/ecoin/common"
+	"github.com/azd1997/ecoin/p2p/eaddr"
+	eaccount "github.com/azd1997/ecoin/account/ecoinaccount"
 )
 
 

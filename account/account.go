@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/gob"
 	"encoding/json"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
 
@@ -12,9 +13,9 @@ import (
 	"golang.org/x/crypto/ripemd160"
 
 	"github.com/azd1997/ego/ecrypto"
+	"github.com/azd1997/ego/utils"
+	log "github.com/azd1997/ego/elog"
 
-	"github.com/azd1997/Ecare/ecoin/log"
-	"github.com/azd1997/Ecare/ecoin/utils"
 )
 
 // Account 账户，包含私钥和公钥，标志唯一身份。UserID是外部可见的标志
@@ -29,7 +30,7 @@ type Account struct {
 func NewAccount(roleNo uint) (*Account, error) {
 	privKey, pubKey, err := newKeyPair()
 	if err != nil {
-		return nil, utils.WrapError("NewAccount", err)
+		return nil, errors.Wrap(err, "NewAccount")
 	}
 	return &Account{
 		PrivKey: privKey,

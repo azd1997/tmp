@@ -41,7 +41,7 @@ func GobRegister(typs ...interface{}) {
 func JsonMarshalIndent(data interface{}) ([]byte, error) {
 	jsonBytes, err := json.MarshalIndent(data, "", "  ")		// 带有换行和缩进的json marshal
 	if err != nil {
-		return nil, WrapError("JsonMarshalIndent", err)
+		return nil, errors.Wrap(err, "JsonMarshalIndent")
 	}
 	return jsonBytes, nil
 }

@@ -3,9 +3,9 @@ package eaddr
 import (
 	"bytes"
 	"encoding/gob"
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common"
+	"github.com/azd1997/ego/utils"
 	"time"
 )
 
@@ -14,7 +14,7 @@ import (
 // 但有的时候需要追溯倒数若干条记录， 用双链表比较合适。
 // 由于可能在多goroutine中被修改，所以对它的操作还要加锁
 type EAddr struct {
-	Addr  Addr
+	Addr Addr
 
 	alias string
 
@@ -256,8 +256,8 @@ func (eaddr *EAddr) IsValid() bool {
 //==============================序列化===============================
 
 type eAddr struct {
-	Addr  Addr
-	Alias string	// 别名，设不设无所谓，主要在于本地自己可以选择修改备注，以改善交互体验
+	Addr   Addr
+	Alias  string	// 别名，设不设无所谓，主要在于本地自己可以选择修改备注，以改善交互体验
 	UserId account.UserId
 
 	PingDelay time.Duration

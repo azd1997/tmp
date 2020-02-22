@@ -1,6 +1,6 @@
 package eaccount
 
-import "github.com/azd1997/Ecare/ecoin/account"
+import "github.com/azd1997/ecoin/account"
 
 // IEcoinAccounts 公开信息集合接口，使用时可不关心底层实现
 // 现在调用方只需要知道这些接口函数

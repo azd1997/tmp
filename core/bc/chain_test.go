@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/transaction"
+	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/core/tx/transaction"
 )
 
 // TODO: MineBlock和VerifyBlock暂不测试

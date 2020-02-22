@@ -9,10 +9,10 @@ import (
 	"github.com/azd1997/ego/ecrypto"
 	"github.com/azd1997/ego/edatabase"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/log"
-	"github.com/azd1997/Ecare/ecoin/transaction"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+	log "github.com/azd1997/ego/elog"
+	"github.com/azd1997/ecoin/core/tx/transaction"
+	"github.com/azd1997/ego/utils"
 )
 
 // InitChainArgs 初始化区块链的传入参数

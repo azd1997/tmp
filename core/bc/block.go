@@ -8,12 +8,12 @@ import (
 	"github.com/azd1997/ego/econtainer"
 	"github.com/azd1997/ego/ecrypto"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	bc "github.com/azd1997/Ecare/ecoin/blockchain"
-	"github.com/azd1997/Ecare/ecoin/common"
-	"github.com/azd1997/Ecare/ecoin/log"
-	"github.com/azd1997/Ecare/ecoin/transaction"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ecoin/account"
+
+	"github.com/azd1997/ecoin/common"
+	log "github.com/azd1997/ego/elog"
+	"github.com/azd1997/ecoin/core/tx/transaction"
+	"github.com/azd1997/ego/utils"
 )
 
 // BLockHeader 区块头
@@ -225,8 +225,11 @@ func (b *Block) VerifyTXs(txFunc transaction.ValidateTxFunc) (txTypeNoArray [][]
 	return txTypeNoArray, nil
 }
 
+
+type ValidateBlockFunc func(b Block) error
+
 // IsValid 区块是否有效。这仅用于gsm.ledger不为空的情况，调用之前需要判断这个情况。
-func (b *Block) IsValid(blockFunc bc.ValidateBlockFunc, txFunc transaction.ValidateTxFunc) (err error) {
+func (b *Block) IsValid(blockFunc ValidateBlockFunc, txFunc transaction.ValidateTxFunc) (err error) {
 
 	/*&Block{
 		BlockHeader: BlockHeader{
@@ -260,7 +263,7 @@ func (b *Block) IsValid(blockFunc bc.ValidateBlockFunc, txFunc transaction.Valid
 	//	return utils.WrapError("Block_IsValid", ErrWrongRoleUserID)
 	//}
 
-	if err = blockFunc(b); err != nil {
+	if err = blockFunc(*b); err != nil {
 		return utils.WrapError("Block_IsValid", err)
 	}
 

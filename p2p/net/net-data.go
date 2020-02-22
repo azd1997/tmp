@@ -3,12 +3,13 @@ package net
 import (
 	"bytes"
 	"fmt"
-	"github.com/azd1997/Ecare/ecoin/eaddr"
-	"github.com/azd1997/Ecare/ecoin/erro"
-	"github.com/azd1997/Ecare/ecoin/utils"
-	"github.com/azd1997/Ecare/ecoinlib/log"
 	"io"
 	"net"
+
+	log "github.com/azd1997/ego/elog"
+	"github.com/azd1997/ego/utils"
+
+	"github.com/azd1997/ecoin/p2p/eaddr"
 )
 
 // Send 应该提供两种机制，一种是作为客户端尚未建立连接；一种是作为服务端/客户端已经建立连接直接写回数据
@@ -26,12 +27,12 @@ func (n *TCPNode) SendDataWithCheck(to string, data []byte) error {
 	// to应当之前就在localNodeList中。在发送数据时检查是不是已有节点并且找到其位置
 	self := n.Addr.String()
 	if to == self {
-		return utils.WrapError("SendDataWithCheck", erro.ErrSendToSelf)
+		return utils.WrapError("SendDataWithCheck", ErrSendToSelf)
 	}
 
 	// 检查节点可用与否
 	if !n.EAddrs.IsAddrStrValid(to) {
-		return utils.WrapError("SendDataWithCheck", erro.ErrInvalidAddr)
+		return utils.WrapError("SendDataWithCheck", ErrInvalidAddr)
 	}
 
 	//向addr发起tcp连接
@@ -42,7 +43,7 @@ func (n *TCPNode) SendDataWithCheck(to string, data []byte) error {
 		// 连接不可用时，调用EAddrs的方法记录作恶时间作恶类型等
 		n.EAddrs.RecordStr(to, eaddr.BadConnFail)
 
-		return fmt.Errorf("SendDataWithCheck: %s: %s", erro.ErrUnreachableNode, to)
+		return fmt.Errorf("SendDataWithCheck: %s: %s", ErrUnreachableNode, to)
 	}
 
 	defer conn.Close()
@@ -63,7 +64,7 @@ func (n *TCPNode) SendData(to string, data []byte) error {
 	if err != nil {
 		// 连接不可用时，调用EAddrs的方法记录作恶时间作恶类型等
 		n.EAddrs.RecordStr(to, eaddr.BadConnFail)
-		return fmt.Errorf("SendDataWithCheck: %s: %s", erro.ErrUnreachableNode, to)
+		return fmt.Errorf("SendDataWithCheck: %s: %s", ErrUnreachableNode, to)
 	}
 	defer conn.Close()
 

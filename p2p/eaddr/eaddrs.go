@@ -1,9 +1,8 @@
 package eaddr
 
 import (
-	"github.com/azd1997/ecoin/erro"
-	"github.com/azd1997/ego/utils"
 	"github.com/azd1997/ego/edatabase"
+	"github.com/azd1997/ego/utils"
 	"sort"
 	"sync"
 )
@@ -195,7 +194,7 @@ func (eaddrs *EAddrs) Load() error {
 	
 	
 	if !edatabase.DbExists(eaddrs.DbEngine, eaddrs.DbPath) {
-		return utils.WrapError("EAddrs_Load", erro.ErrDbNotExists)
+		return utils.WrapError("EAddrs_Load", ErrDbNotExists)
 	}
 	db, err := edatabase.OpenDatabaseWithRetry(eaddrs.DbEngine, eaddrs.DbPath)
 	if err != nil {

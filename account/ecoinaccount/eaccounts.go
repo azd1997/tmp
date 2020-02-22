@@ -9,14 +9,15 @@ import (
 	"os"
 	"sync"
 
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/utils"
+	"github.com/azd1997/ego/utils"
+
+	"github.com/azd1997/ecoin/account"
 )
 
 // EAccounts 系统账户表 存储每个账户的可公开的信息，包括余额、角色（角色中定义了其币相关的规则）、公钥、可用状态。键值为UserID.Id
 // TODO: 后期将之改为状态树或者叫账户树。因为现在这么做如果账户很多其实占用很大。
 type EAccounts struct {
-	Map map[string]*EAccount 	`json:"eAccounts"`
+	Map map[string]*EAccount `json:"eAccounts"`
 	Lock sync.RWMutex	// 读写锁，尽管每个共识节点都维护自己的EAccounts集合，但由于各自都是并发多协程的，所以需要进行并发保护
 }
 

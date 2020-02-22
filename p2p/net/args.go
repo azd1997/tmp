@@ -1,10 +1,10 @@
 package net
 
 import (
-	"github.com/azd1997/Ecare/ecoin/account"
-	"github.com/azd1997/Ecare/ecoin/blockchain/singlechain"
-	"github.com/azd1997/Ecare/ecoin/eaddr"
-	eaccount "github.com/azd1997/Ecare/ecoin/ecoinaccount"
+	"github.com/azd1997/ecoin/account"
+	eaccount "github.com/azd1997/ecoin/account/ecoinaccount"
+	"github.com/azd1997/ecoin/core/bc"
+	"github.com/azd1997/ecoin/p2p/eaddr"
 )
 
 // Args 外部数据结构的参数，如区块链、数据存储...，注入到P2P节点中以方便调用

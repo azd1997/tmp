@@ -1,6 +1,6 @@
 package storage
 
-import "github.com/azd1997/Ecare/ecoin/common"
+import "github.com/azd1997/ecoin/common"
 
 // DataStorage 数据存储接口，标志数据库等
 type DataStorage interface {
