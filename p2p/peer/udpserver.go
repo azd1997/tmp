@@ -4,8 +4,6 @@ import (
 	"github.com/azd1997/ego/epattern"
 	"net"
 	"time"
-
-	log "github.com/azd1997/ego/elog"
 )
 
 const (
@@ -54,7 +52,7 @@ func (u *udpServer) Send(packet *UDPPacket) {
 	select {
 	case u.sendQ <- packet:
 	default:
-		log.Warn("udp server sendQ is full, drop packet")
+		logger.Warnln("udp server sendQ is full, drop packet")
 	}
 }
 
@@ -66,7 +64,7 @@ func (u *udpServer) Start() bool {
 	var err error
 
 	if u.conn, err = net.ListenUDP("udp", udpAddr); err != nil {
-		log.Warn("setup UDP server failed:%v", err)
+		logger.Warn("setup UDP server failed: %v\n", err)
 		return false
 	}
 
@@ -99,7 +97,7 @@ func (u *udpServer) recv() {
 				if err, ok := err.(net.Error); ok && err.Timeout() {
 					break
 				}
-				log.Warn("udp server read err:%v", err)
+				logger.Warn("udp server read err: %v\n", err)
 				break
 			}
 
@@ -111,7 +109,7 @@ func (u *udpServer) recv() {
 			select {
 			case u.recvQ <- pkt:
 			default:
-				log.Warn("udp server recvQ is full, drop packet")
+				logger.Warnln("udp server recvQ is full, drop packet")
 			}
 
 		}
@@ -129,7 +127,7 @@ func (u *udpServer) send() {
 		case packet := <-u.sendQ:
 			_, err := u.conn.WriteToUDP(packet.Data, packet.Addr)
 			if err != nil {
-				log.Warn("udp server send to %v failed:%v, size:%d",
+				logger.Warn("udp server send to %v failed:%v, size:%d\n",
 					packet.Addr, err, len(packet.Data))
 			}
 		}

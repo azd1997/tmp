@@ -1,6 +1,9 @@
 package utils
 
-import "io/ioutil"
+import (
+	"github.com/azd1997/ecoin/common/encoding"
+	"io/ioutil"
+)
 
 /*********************************************************************************************************************
                                                     SaveFile相关
@@ -14,7 +17,7 @@ func SaveFileWithGobEncode(filePath string, data interface{}) error {
 		return err
 	}
 
-	dataBytes, err := GobEncode(data)
+	dataBytes, err := encoding.GobEncode(data)
 	if err != nil {
 		return err
 	}
@@ -32,7 +35,7 @@ func SaveFileWithJsonMarshal(filePath string, data interface{}) error {
 		return err
 	}
 
-	dataBytes, err := JsonMarshalIndent(data)
+	dataBytes, err := encoding.JsonMarshalIndent(data)
 	if err != nil {
 		return err
 	}

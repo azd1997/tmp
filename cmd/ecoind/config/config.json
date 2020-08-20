@@ -1,0 +1,41 @@
+{
+  "account_config": {
+    "type": 0,
+    "path": ""
+  },
+
+  "chain_config": {
+    "chain_id": 0,
+    "block_interval": 10,
+    "genesis": "THIS IS GENESIS INFO"
+  },
+
+  "p2p_config": {
+    "ip": "127.0.0.1",
+    "port": 8000,
+    "max_peers": 128,
+    "seeds": [
+      {
+        "addr": "127.0.0.1:7000",
+        "hex_id": "seed_id1"
+      },
+      {
+        "addr": "127.0.0.1:7001",
+        "hex_id": "seed_id2"
+      }
+    ]
+  },
+
+  "log_config": {
+    "log_level": 3,
+    "log_color": false
+  },
+
+  "rpc_config": {
+    "http_port": 6000
+  },
+
+  "db_config": {
+    "db_path": "dppath"
+  }
+}

@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/azd1997/ego/epattern"
-	log "github.com/azd1997/ego/elog"
 
-	"github.com/azd1997/ecoin/account"
+	"github.com/azd1997/ecoin/common/crypto"
+	"github.com/azd1997/ecoin/common/encoding"
+	"github.com/azd1997/ecoin/protocol/discover"
 )
-
 
 
 const (
@@ -27,24 +27,24 @@ type Provider interface {
 	Stop()
 
 	// GetPeers 向调用者返回可用的节点
-	GetPeers(expect int, exclude map[account.UserId]bool) ([]*Peer, error)
+	GetPeers(expect int, exclude map[ID]bool) ([]*Peer, error)
 
 	// AddSeeds 添加seed种子节点，用于provider初始化
 	AddSeeds(seeds []*Peer)
 }
 
 
-func NewProvider(ipstr string, port int, id account.UserId) Provider {
+func NewProvider(ipstr string, port int, id ID) Provider {
 	ip := net.ParseIP(ipstr)
 	if ip == nil {
-		log.Error("invalid ip:%s", ipstr)
+		logger.Error("invalid ip: %s\n", ipstr)
 		os.Exit(1)
 	}
 
 	p := &provider{
 		ip:            ip,
 		port:          port,
-		userId:id,
+		peerId:id,
 		table:         newTable(id),
 		pingHash:      make(map[string]time.Time),
 		lm:            epattern.NewLoop(1),
@@ -59,7 +59,7 @@ func NewProvider(ipstr string, port int, id account.UserId) Provider {
 type provider struct {
 	ip            net.IP
 	port          int
-	userId account.UserId
+	peerId ID
 	udp           UDPServer
 	table         table
 	pingHash      map[string]time.Time // hash为键
@@ -69,7 +69,7 @@ type provider struct {
 
 func (p *provider) Start() {
 	if !p.udp.Start() {
-		log.Error("start udp server failed")
+		logger.Errorln("start udp server failed")
 		os.Exit(1)
 	}
 
@@ -87,13 +87,13 @@ func (p *provider) AddSeeds(seeds []*Peer) {
 	p.table.addPeers(seeds, true)
 }
 
-func (p *provider) GetPeers(expect int, exclude map[account.UserId]bool) ([]*Peer, error) {
+func (p *provider) GetPeers(expect int, exclude map[ID]bool) ([]*Peer, error) {
 	return p.table.getPeers(expect, exclude), nil
 }
 
 func (p *provider) String() string {
 	return fmt.Sprintf("[provider] id:%s, with %s:%d\n",
-		p.userId, p.ip.String(), p.port)
+		p.peerId, p.ip.String(), p.port)
 }
 
 // Provider的工作循环
@@ -121,35 +121,36 @@ func (p *provider) loop() {
 }
 
 func (p *provider) handleRecv(pkt *UDPPacket) {
-	head, err := discover.UnmarshalHead(bytes.NewReader(pkt.Data))
+	head := &discover.Head{}
+	err := head.Decode(bytes.NewReader(pkt.Data))
 	if err != nil {
-		log.Warn("receive error data")
+		logger.Warnln("receive error data")
 		return
 	}
 
 	now := time.Now().Unix()
 	if head.Time+msgDiscardTime < now {
-		logger.Debug("expired Packet from %v\n", pkt.Addr)
+		logger.Info("expired Packet from %v", pkt.Addr)
 		return
 	}
 
 	switch head.Type {
-	case discover.MsgPing:
+	case discover.MSG_PING:
 		p.handlePing(pkt.Data, pkt.Addr)
-	case discover.MsgPong:
+	case discover.MSG_PONG:
 		p.handlePong(pkt.Data, pkt.Addr)
-	case discover.MsgGetNeighbours:
-		p.handleGetNeigoubours(pkt.Data, pkt.Addr)
-	case discover.MsgNeighbours:
-		p.handleNeigoubours(pkt.Data, pkt.Addr)
+	case discover.MSG_GET_NEIGHBERS:
+		p.handleGetNeighbours(pkt.Data, pkt.Addr)
+	case discover.MSG_NEIGHBERS:
+		p.handleNeighbours(pkt.Data, pkt.Addr)
 	default:
-		logger.Warn("unknown op:%d\n", head.Type)
+		logger.Warn("unknown op: %d\n", head.Type)
 		return
 	}
 }
 
 func (p *provider) send(msg []byte, addr *net.UDPAddr) {
-	pkt := &utils.UDPPacket{
+	pkt := &UDPPacket{
 		Data: msg,
 		Addr: addr,
 	}
@@ -160,11 +161,10 @@ func (p *provider) ping() {
 	targets := p.table.getPeersToPing()
 
 	for _, peer := range targets {
-		pkt := discover.NewPing(p.compressedKey).Marshal()
-
+		pkt := discover.NewPingMsg(p.peerId).Encode()
 		if addr, err := net.ResolveUDPAddr("udp", peer.Address()); err == nil {
 			p.send(pkt, addr)
-			p.pingHash[utils.ToHex(utils.Hash(pkt))] = time.Now()
+			p.pingHash[encoding.ToHex(crypto.HashD(pkt))] = time.Now()
 		}
 	}
 }
@@ -173,7 +173,7 @@ func (p *provider) getNeighbours() {
 	targets := p.table.getPeersToGetNeighbours()
 
 	for _, peer := range targets {
-		pkt := discover.NewGetNeighbours(p.compressedKey).Marshal()
+		pkt := discover.NewGetNeighboursMsg(p.peerId).Encode()
 
 		if addr, err := net.ResolveUDPAddr("udp", peer.Address()); err == nil {
 			p.send(pkt, addr)
@@ -182,98 +182,96 @@ func (p *provider) getNeighbours() {
 }
 
 func (p *provider) handlePing(data []byte, remoteAddr *net.UDPAddr) {
-	ping, err := discover.UnmarshalPing(bytes.NewReader(data))
+	//fmt.Println("555", encoding.ToHex(crypto.HashD(data)))
+	ping := &discover.PingMsg{}
+	err := ping.Decode(bytes.NewReader(data))
 	if err != nil {
-		logger.Warn("receive error ping:%v\n", err)
+		logger.Warn("receive error ping: %v\n", err)
 		return
 	}
 
-	key, err := btcec.ParsePubKey(ping.PubKey, btcec.S256())
-	if err != nil {
-		logger.Warn("parse ping key failed:%v\n", err)
-	}
-	p.table.recvPing(NewPeer(remoteAddr.IP, remoteAddr.Port, key))
+	p.table.recvPing(NewPeer(remoteAddr.IP, remoteAddr.Port, ping.From))
 
 	// response ping
-	pingHash := utils.Hash(data)
-	pong := discover.NewPong(pingHash, p.compressedKey).Marshal()
-	if pong == nil {
-		logger.Warn("generate Pong failed\n")
+	pingHash := crypto.HashD(data)
+	//fmt.Println("000", encoding.ToHex(pingHash))
+	//fmt.Println("777", encoding.ToHex(crypto.HashD(data)))
+	pong := discover.NewPongMsg(pingHash, p.peerId)
+	//fmt.Println("999", encoding.ToHex(crypto.HashD(data)))
+	pongB := pong.Encode()
+	//fmt.Println("xxx", encoding.ToHex(crypto.HashD(data)))
+	if pongB == nil {
+		logger.Warnln("generate Pong failed")
 		return
 	}
-	p.send(pong, remoteAddr)
+	//fmt.Println("888", encoding.ToHex(crypto.HashD(data)))
+	//fmt.Println("111", encoding.ToHex(pong.PingHash))
+	p.send(pongB, remoteAddr)
+	//fmt.Println("666", encoding.ToHex(crypto.HashD(data)))
 }
 
 func (p *provider) handlePong(data []byte, remoteAddr *net.UDPAddr) {
-	pong, err := discover.UnmarshalPong(bytes.NewReader(data))
+	pong := &discover.PongMsg{}
+	err := pong.Decode(bytes.NewReader(data))
 	if err != nil {
 		logger.Warn("receive error Pong:%v\n", err)
 		return
 	}
 
-	pingHash := utils.ToHex(pong.PingHash)
+	pingHash := encoding.ToHex(pong.PingHash)
 	if _, ok := p.pingHash[pingHash]; !ok {
 		return
 	}
 	delete(p.pingHash, pingHash)
 
-	key, err := btcec.ParsePubKey(pong.PubKey, btcec.S256())
-	if err != nil {
-		logger.Warn("parse ping key failed:%v\n", err)
-	}
-	p.table.recvPong(NewPeer(remoteAddr.IP, remoteAddr.Port, key))
+	p.table.recvPong(NewPeer(remoteAddr.IP, remoteAddr.Port, pong.From))
 }
 
-func (p *provider) handleGetNeigoubours(data []byte, remoteAddr *net.UDPAddr) {
-	getNeibours, err := discover.UnmarshalGetNeighbours(bytes.NewReader(data))
+func (p *provider) handleGetNeighbours(data []byte, remoteAddr *net.UDPAddr) {
+	getNeighbours := &discover.GetNeighboursMsg{}
+	err := getNeighbours.Decode(bytes.NewReader(data))
 	if err != nil {
-		logger.Warn("receive error GetNeighbours:%v\n", err)
+		logger.Warn("receive error GetNeighbours: %v\n", err)
 		return
 	}
 
-	remotePubKey, err := btcec.ParsePubKey(getNeibours.PubKey, btcec.S256())
-	if err != nil {
-		logger.Warn("parse GetNeighbours PubKey failed:%v\n", err)
-	}
+	fromId := getNeighbours.From
 
-	remoteID := crypto.BytesToID(getNeibours.PubKey)
-	if !p.table.exists(remoteID) {
+	if !p.table.exists(fromId) {
 		logger.Warn("query is not from my peer and ignore it: %v\n", remoteAddr)
 		return
 	}
 
 	// response
-	exclude := make(map[string]bool)
-	exclude[remoteID] = true
+	exclude := make(map[ID]bool)
+	exclude[fromId] = true
 
 	neighbours := p.table.getPeers(maxNeighboursRspNum, exclude)
 	neighboursMsg := p.genNeighbours(neighbours)
 	p.send(neighboursMsg, remoteAddr)
+	//fmt.Println("p.send 1", encoding.ToHex(crypto.HashD(neighboursMsg)))
 
-	// also notify the neighbours about the getter
-	putMsg := p.genNeighbours([]*Peer{NewPeer(remoteAddr.IP, remoteAddr.Port, remotePubKey)})
+	// 通知自己的邻居们，有个新家伙来了(可能自己的邻居们已经知道，但仍要发，确保节点同步)
+	putMsg := p.genNeighbours([]*Peer{NewPeer(remoteAddr.IP, remoteAddr.Port, fromId)})
 	for _, n := range neighbours {
 		if neighbourAddr, err := net.ResolveUDPAddr("udp", n.Address()); err == nil {
 			p.send(putMsg, neighbourAddr)
+			//fmt.Println("p.send 2", encoding.ToHex(crypto.HashD(putMsg)))
 		}
 	}
 }
 
-func (p *provider) handleNeigoubours(data []byte, remoteAddr *net.UDPAddr) {
-	neighbours, err := discover.UnmarshalNeighbours(bytes.NewReader(data))
+func (p *provider) handleNeighbours(data []byte, remoteAddr *net.UDPAddr) {
+	neighbours := &discover.NeighboursMsg{}
+	err := neighbours.Decode(bytes.NewReader(data))
 	if err != nil {
-		logger.Warn("receive error Neighbours:%v\n", err)
+		logger.Warn("receive error Neighbours: %v\n", err)
 		return
 	}
 
 	var peers []*Peer
 	for _, n := range neighbours.Nodes {
-		pubKey, err := btcec.ParsePubKey(n.PubKey, btcec.S256())
-		if err != nil {
-			logger.Warn("parse Neighbours PubKey failed:%v\n", err)
-			continue
-		}
-		peers = append(peers, NewPeer(n.Addr.IP, int(n.Addr.Port), pubKey))
+		peers = append(peers, NewPeer(n.Addr.IP, int(n.Addr.Port), n.ID))
 	}
 
 	p.table.addPeers(peers, false)
@@ -292,19 +290,20 @@ func (p *provider) refresh() {
 
 func (p *provider) genNeighbours(peers []*Peer) []byte {
 	var nodes []*discover.Node
-	for _, p := range peers {
-		addr := discover.NewAddress(p.IP.String(), int32(p.Port))
-		node := discover.NewNode(addr, crypto.IDToBytes(p.ID))
+	for _, peer := range peers {
+		addr := discover.NewAddress(peer.IP.String(), int32(peer.Port))
+		node := discover.NewNode(addr, peer.ID)
 		nodes = append(nodes, node)
 	}
 
-	neighbours := discover.NewNeighbours(nodes)
-	return neighbours.Marshal()
+	neighbours := discover.NewNeighboursMsg(p.peerId, nodes)
+	//fmt.Println("gennei", encoding.ToHex(crypto.HashD(neighbours.Encode())))
+	return neighbours.Encode()
 }
 
 // only used in test
-func (p *provider) getAllPeersForTest() map[string]*Peer {
-	result := make(map[string]*Peer)
+func (p *provider) getAllPeersForTest() map[ID]*Peer {
+	result := make(map[ID]*Peer)
 	table := p.table.(*tableImp)
 
 	for _, pst := range table.peers {

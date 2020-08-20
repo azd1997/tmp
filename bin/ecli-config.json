@@ -1,0 +1,8 @@
+{
+  "server_ip": "127.0.0.1",
+  "server_port": 7000,
+  "scheme": "http",
+  "ignore_hidden": 0,
+  "account_type": 1,
+  "account_path": "./account.json"
+}

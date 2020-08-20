@@ -1,7 +1,7 @@
 package account
 
 import (
-	"github.com/azd1997/ego/ecrypto"
+	"github.com/azd1997/ecoin/common/crypto"
 )
 
 // IAccount 账户接口
@@ -11,15 +11,15 @@ type IAccount interface {
 	String() string
 
 	// UserId 生成UserId
-	UserId() (UserId, error)
+	UserId() (*ID, error)
 
 	/*签名与验证*/
 
 	// Sign 签名
-	Sign(target []byte) (ecrypto.Signature, error)
+	Sign(target []byte) (*crypto.Signature, error)
 
 	// VerifySign 验证签名
-	VerifySign(target []byte, sig []byte, pubKey []byte) bool
+	VerifySign(target []byte, sig *crypto.Signature, pubKey *crypto.PublicKey) bool
 
 	/*存储与读取*/
 

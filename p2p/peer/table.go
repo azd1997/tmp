@@ -5,17 +5,13 @@ import (
 	"sort"
 	"sync"
 	"time"
-
-	log "github.com/azd1997/ego/elog"
-
-	"github.com/azd1997/ecoin/account"
 )
 
 // table 维护节点信息
 type table interface {
 	addPeers(p []*Peer, isSeed bool)
-	getPeers(expect int, exclude map[account.UserId]bool) []*Peer
-	exists(id account.UserId) bool
+	getPeers(expect int, exclude map[ID]bool) []*Peer
+	exists(id ID) bool
 
 	getPeersToPing() []*Peer
 	getPeersToGetNeighbours() []*Peer
@@ -32,7 +28,7 @@ const (
 )
 
 type tableImp struct {
-	self       account.UserId
+	self       ID
 
 	// seeds节点组为硬编码的种子节点，一般来讲认为是不会作出恶意行为的
 	// 即便不诚实不可达也不会移入其他表
@@ -41,10 +37,10 @@ type tableImp struct {
 	// 中间移动。正常都在peers，一旦不可达则移入expiredPeers；
 	// 一旦不诚实(通常不诚实的节点是可达的)将其移入dishonestPeers
 	// 不诚实的节点即便不可达也不会移入expiredPeers
-	seeds        map[account.UserId]*state
-	peers        map[account.UserId]*state
-	bannedPeers map[account.UserId]*state
-	expiredPeers map[account.UserId]*state
+	seeds        map[ID]*state
+	peers        map[ID]*state
+	bannedPeers map[ID]*state
+	expiredPeers map[ID]*state
 
 	// 随机源
 	r            *rand.Rand
@@ -53,13 +49,13 @@ type tableImp struct {
 	sync.RWMutex
 }
 
-func newTable(self account.UserId) table {
+func newTable(self ID) table {
 	return &tableImp{
 		self:           self,
-		seeds:          make(map[account.UserId]*state),
-		peers:          make(map[account.UserId]*state),
-		bannedPeers: make(map[account.UserId]*state),
-		expiredPeers:   make(map[account.UserId]*state),
+		seeds:          make(map[ID]*state),
+		peers:          make(map[ID]*state),
+		bannedPeers: make(map[ID]*state),
+		expiredPeers:   make(map[ID]*state),
 		r:              rand.New(rand.NewSource(time.Now().Unix())),
 	}
 }
@@ -76,7 +72,7 @@ func (t *tableImp) addPeers(p []*Peer, isSeed bool) {
 }
 
 // 批量获取节点(无序)
-func (t *tableImp) getPeers(expect int, exclude map[account.UserId]bool) []*Peer {
+func (t *tableImp) getPeers(expect int, exclude map[ID]bool) []*Peer {
 	var peers []*Peer
 
 	t.Lock()
@@ -104,7 +100,7 @@ func (t *tableImp) getPeers(expect int, exclude map[account.UserId]bool) []*Peer
 
 // 批量获取节点(按delay排序)
 // 如果要获取全部可用的节点，直接给入一个超大的expect，或者设置expect = len(t.peers)
-func (t *tableImp) getSortedPeers(expect int, exclude map[account.UserId]bool) []*Peer {
+func (t *tableImp) getSortedPeers(expect int, exclude map[ID]bool) []*Peer {
 	var peers []state
 
 	// 注意! 这样的值拷贝只是权宜之计
@@ -138,7 +134,7 @@ func (t *tableImp) getSortedPeers(expect int, exclude map[account.UserId]bool) [
 }
 
 // exists 是否存在某节点
-func (t *tableImp) exists(id account.UserId) bool {
+func (t *tableImp) exists(id ID) bool {
 	t.RLock()
 	defer t.RUnlock()
 
@@ -232,14 +228,14 @@ func (t *tableImp) refresh() {
 
 	for _, peer := range t.peers {
 		if !peer.isHonest() {
-			log.Trace("p2p peer %v turn banned", peer.Peer)
+			logger.Debug("p2p peer %v turn banned\n", peer.Peer)
 			peer.turnBanned()
 			t.bannedPeers[peer.ID] = peer
 			delete(t.peers, peer.ID)
 			continue
 		}
 		if !peer.isReachable() {
-			log.Trace("p2p peer %v turn expired", peer.Peer)
+			logger.Debug("p2p peer %v turn expired\n", peer.Peer)
 			t.expiredPeers[peer.ID] = peer
 			delete(t.peers, peer.ID)
 			continue
@@ -280,7 +276,7 @@ func (t *tableImp) add(pst *state, isSeed bool) {
 	}
 
 	if _, ok := t.peers[pst.ID]; !ok {
-		log.Trace("add peer %v\n", pst)
+		logger.Debug("add peer %v\n", pst)
 		t.peers[pst.ID] = pst
 	}
 }

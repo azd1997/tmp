@@ -2,23 +2,31 @@ package peer
 
 import (
 	"fmt"
+	"github.com/azd1997/ecoin/common/crypto"
 	"net"
-
-	"github.com/azd1997/ecoin/account"
 )
+
+
+//////////////////////////// PeerID /////////////////////////////
+
+// 现在这个ID能够逆推出公钥
+// 如果使用其他方式的ID，那么在传递许多消息时需要额外附带公钥信息
+//type ID = crypto.ID
+// 见peerid.go
+
+
+//////////////////////////// Peer /////////////////////////////
+
 
 // Peer 代表了一个可连接的节点
 type Peer struct {
 	IP   net.IP
 	Port int
-
-	// 将账户与节点绑定起来
-	// ID将作为Peer的另一种标识
-	ID account.UserId
+	ID ID
 }
 
 // NewPeer 新建一个节点标识
-func NewPeer(ip net.IP, port int, id account.UserId) *Peer {
+func NewPeer(ip net.IP, port int, id crypto.ID) *Peer {
 	p := &Peer{
 		IP:   ip,
 		Port: port,
@@ -28,7 +36,7 @@ func NewPeer(ip net.IP, port int, id account.UserId) *Peer {
 }
 
 func (p *Peer) String() string {
-	return fmt.Sprintf("ID %s address %s", p.ID.Id, p.Address())
+	return fmt.Sprintf("ID %s address %s", p.ID, p.Address())
 }
 
 // Address 返回节点IP地址，例如 192.168.1.1:8080,[2001:0db8:85a3:08d3:1319:8a2e:0370:7344]:8443
