@@ -1,12 +1,16 @@
 /**********************************************************************
 * @Author: Eiger (201820114847@mail.scut.edu.cn)
-* @Date: 2020/8/26 18:06
+* @Date: 2020/9/1 19:09
 * @Description: The file is for
 ***********************************************************************/
 
-package pot
+package storage
 
-import "errors"
+// MemoryStorage 内存存储，就是内存中维护区块链
+type MemoryStorage struct {
 
-// ErrProposalDropped pot竞赛冠军的提案（也就是区块）因为某些原因被丢弃了
-var ErrProposalDropped = errors.New("pot proposal dropped")
+}
+
+func NewMemoryStorage() *MemoryStorage {
+
+}

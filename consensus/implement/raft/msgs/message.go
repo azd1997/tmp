@@ -1,12 +1,11 @@
 /**********************************************************************
 * @Author: Eiger (201820114847@mail.scut.edu.cn)
-* @Date: 2020/8/26 15:01
+* @Date: 2020/9/1 19:31
 * @Description: The file is for
 ***********************************************************************/
 
-package consensus
+package msgs
 
-// Entry 日志。 数据的载体
-type Entry struct {
-	EntryType
+type Message struct {
+
 }

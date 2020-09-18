@@ -56,7 +56,7 @@ type Server interface {
 	// 	来源一： map["txchan"] = chan *Tx
 	//  来源二： 其他共识节点传递过来的
 	// 收集交易之后需要有触发条件，将之打包为区块，再将区块进行同步
-	CollectLoop(ctx context.Context)
+	collectLoop(ctx context.Context)
 }
 
 

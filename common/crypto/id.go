@@ -100,7 +100,7 @@ func PubKey2ID(compressedKey []byte, roleNo uint8) ID {
 	return id
 }
 
-
+// RandID 生成一个随机ID
 func RandID() ID {
 	key := make([]byte, 53)
 	for i:=0; i<len(key); i++ {

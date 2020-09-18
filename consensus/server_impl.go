@@ -17,7 +17,7 @@ type serverImpl struct {
 }
 
 // CollectLoop 收集循环
-func (s *serverImpl) CollectLoop(ctx context.Context) {
+func (s *serverImpl) collectLoop(ctx context.Context) {
 	txchan := ctx.Value("txchan").(chan *core.Tx)
 
 	for {

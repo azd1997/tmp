@@ -4,7 +4,7 @@
 * @Description: The file is for
 ***********************************************************************/
 
-package pot
+package raft
 
 import (
 	"github.com/azd1997/ecoin/consensus/implement/pot/models"

@@ -4,7 +4,7 @@
 * @Description: The file is for
 ***********************************************************************/
 
-package pot
+package storage
 
 type Storage interface {
 	// 从存储引擎中加载两种状态
@@ -17,11 +17,3 @@ type Storage interface {
 	LastIndex() (uint64, error)
 }
 
-// MemoryStorage 内存存储，就是内存中维护区块链
-type MemoryStorage struct {
-
-}
-
-func NewMemoryStorage() *MemoryStorage {
-
-}
